@@ -16,18 +16,15 @@ HF_MODEL = "meta-llama/Llama-3.2-3B-Instruct"  # Define Hugging Face model name 
 # Initialize the LLM (Fallback to Hugging Face if Ollama is unavailable)
 @st.cache_resource
 def get_llm():
+    if os.getenv("STREAMLIT_CLOUD"):  # Detects if running on Streamlit Cloud
+        hf_client = InferenceClient(api_key=api_key)
+        return hf_client
     try:
-        # Try using Ollama first
         llm = OllamaLLM(model="llama2", base_url="http://127.0.0.1:11434")
-        # Test if it works by invoking a dummy request
-        llm.invoke("Test connection")
+        llm.invoke("Test connection")  # Test Ollama
         return llm
     except Exception:
-        # Load Hugging Face API client
-        hf_client = InferenceClient(
-            provider="sambanova",
-            api_key=os.getenv("HUGGINGFACE_API_KEY")  # Use an env variable for security
-        )
+        hf_client = InferenceClient(api_key=api_key)
         return hf_client
 
 # Create email generation prompt templates
@@ -58,19 +55,15 @@ def create_email_reply_prompt():
 # Function to generate text using the selected LLM
 def generate_text(llm, prompt_data):
     if isinstance(llm, OllamaLLM):
-        # If using Ollama, use LangChain's pipeline
         prompt = create_new_email_prompt() if "content" in prompt_data else create_email_reply_prompt()
         chain = prompt | llm
         return chain.invoke(prompt_data)
     else:
         # If using Hugging Face, send a request manually
-        messages = [{"role": "user", "content": prompt_data}]
-        response = llm.chat.completions.create(
-            model=HF_MODEL,  # Use the predefined Hugging Face model
-            messages=messages,
-            max_tokens=500
-        )
-        return response.choices[0].message["content"]
+        prompt_text = f"Write an email:\n\n{prompt_data}"
+        response = llm.text_generation(prompt_text, max_length=500)
+        return response
+
 
 # Main UI
 
