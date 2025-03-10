@@ -7,6 +7,9 @@ import os
 # Set page config
 st.set_page_config(page_title="Email Assistant", page_icon="📧")
 
+envkey = os.getenv("HUGGINGFACE_API_KEY")
+api_key = envkey if envkey else st.secrets["huggingface"]["api_key"]
+
 # Hugging Face model setup
 HF_MODEL = "meta-llama/Llama-3.2-3B-Instruct"  # Define Hugging Face model name here
 
