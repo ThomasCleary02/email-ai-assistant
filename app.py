@@ -7,8 +7,16 @@ import os
 # Set page config
 st.set_page_config(page_title="Email Assistant", page_icon="📧")
 
-envkey = os.getenv("HUGGINGFACE_API_KEY")
-api_key = envkey if envkey else st.secrets["huggingface"]["api_key"]
+# Get API key from environment first
+api_key = os.getenv("HUGGINGFACE_API_KEY")
+
+# Try to get from Streamlit secrets if available
+try:
+    if not api_key and hasattr(st, "secrets") and "huggingface" in st.secrets:
+        api_key = st.secrets["huggingface"]["api_key"]
+except Exception:
+    # If secrets aren't available, just continue with None or environment variable
+    pass
 
 # Hugging Face model setup
 HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"  # Define Hugging Face model name here
