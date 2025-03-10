@@ -30,12 +30,12 @@ def get_llm():
 # Create email generation prompt templates
 def create_new_email_prompt():
     template = """
-    Write a professional email with the following details:
+    Write a single professional email with the following details:
 
     Content/Purpose: {content}
     Tone: {tone}
 
-    Provide both a subject line and the email body.
+    Provide exactly one email with both a subject line and the email body.
     """
     return PromptTemplate(template=template, input_variables=["content", "tone"])
 
@@ -52,12 +52,22 @@ def create_email_reply_prompt():
     """
     return PromptTemplate(template=template, input_variables=["original_email", "message", "tone"])
 
+def parse_response(response):
+    # Split by "Subject:" and take only the first complete email
+    if "Subject:" in response:
+        parts = response.split("Subject:")
+        if len(parts) > 1:
+            return "Subject:" + parts[1]
+    return response
+
 # Function to generate text using the selected LLM
 def generate_text(llm, prompt_data):
     if isinstance(llm, OllamaLLM):
         prompt = create_new_email_prompt() if "content" in prompt_data else create_email_reply_prompt()
         chain = prompt | llm
-        return chain.invoke(prompt_data)
+        result = chain.invoke(prompt_data)
+        return parse_response(result)
+
     else:
         # If using Hugging Face, format the prompt manually
         if "content" in prompt_data:
@@ -81,8 +91,8 @@ def generate_text(llm, prompt_data):
             It should also be in this tone: {prompt_data['tone']}
             """
             
-        response = llm.text_generation(prompt_text, max_new_tokens=500, temperature=0.7)
-        return response
+        response = llm.text_generation(prompt_text, max_new_tokens=500, temperature=0.7, do_sample=True, top_p=0.95)
+        return parse_response(response)
 
 
 # Main UI
