@@ -20,9 +20,6 @@ def get_llm():
         llm.invoke("Test connection")
         return llm
     except Exception:
-        # If Ollama is not running, fallback to Hugging Face
-        st.warning("⚠️ Ollama is not running. Using Hugging Face API instead.")
-        
         # Load Hugging Face API client
         hf_client = InferenceClient(
             provider="sambanova",
