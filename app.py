@@ -11,13 +11,13 @@ envkey = os.getenv("HUGGINGFACE_API_KEY")
 api_key = envkey if envkey else st.secrets["huggingface"]["api_key"]
 
 # Hugging Face model setup
-HF_MODEL = "meta-llama/Llama-3.2-3B-Instruct"  # Define Hugging Face model name here
+HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"  # Define Hugging Face model name here
 
 # Initialize the LLM (Fallback to Hugging Face if Ollama is unavailable)
 @st.cache_resource
 def get_llm():
     if os.getenv("STREAMLIT_CLOUD"):  # Detects if running on Streamlit Cloud
-        hf_client = InferenceClient(api_key=api_key)
+        hf_client = InferenceClient(model=HF_MODEL, api_key=api_key)
         return hf_client
     try:
         llm = OllamaLLM(model="llama2", base_url="http://127.0.0.1:11434")
@@ -59,9 +59,29 @@ def generate_text(llm, prompt_data):
         chain = prompt | llm
         return chain.invoke(prompt_data)
     else:
-        # If using Hugging Face, send a request manually
-        prompt_text = f"Write an email:\n\n{prompt_data}"
-        response = llm.text_generation(prompt_text, max_length=500)
+        # If using Hugging Face, format the prompt manually
+        if "content" in prompt_data:
+            prompt_text = f"""
+            Write a professional email with the following details:
+
+            Content/Purpose: {prompt_data['content']}
+            Tone: {prompt_data['tone']}
+
+            Provide both a subject line and the email body.
+            """
+        else:
+            prompt_text = f"""
+            Write a reply to the following email:
+
+            Original Email: {prompt_data['original_email']}
+
+            Your reply should communicate this message:
+            {prompt_data['message']}
+
+            It should also be in this tone: {prompt_data['tone']}
+            """
+            
+        response = llm.text_generation(prompt_text, max_new_tokens=500, temperature=0.7)
         return response
 
 
