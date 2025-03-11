@@ -4,6 +4,12 @@ from langchain.prompts import PromptTemplate
 from huggingface_hub import InferenceClient
 import os
 
+# Hugging Face model setup
+HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"  # Define Hugging Face model name here
+
+# Ollama model setup
+OLLAMA_MODEL = "mistral"
+
 # Set page config
 st.set_page_config(page_title="Email Assistant", page_icon="📧")
 
@@ -18,9 +24,6 @@ except Exception:
     # If secrets aren't available, just continue with None or environment variable
     pass
 
-# Hugging Face model setup
-HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"  # Define Hugging Face model name here
-
 # Initialize the LLM (Fallback to Hugging Face if Ollama is unavailable)
 @st.cache_resource
 def get_llm():
@@ -28,7 +31,7 @@ def get_llm():
         hf_client = InferenceClient(model=HF_MODEL, api_key=api_key)
         return hf_client
     try:
-        llm = OllamaLLM(model="llama2", base_url="http://127.0.0.1:11434")
+        llm = OllamaLLM(model=OLLAMA_MODEL, base_url="http://127.0.0.1:11434")
         llm.invoke("Test connection")  # Test Ollama
         return llm
     except Exception:
