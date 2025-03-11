@@ -8,7 +8,10 @@ Email Assistant is a Streamlit application that helps you draft professional ema
   - **Draft New Email**: Generate a complete email from scratch based on your content description
   - **Generate Reply**: Create appropriate responses to existing emails
 - **Customizable Tone**: Choose from various tones including Professional, Friendly, Formal, Persuasive, and Concise
-- **Flexible Backend**: Works with either local Ollama models or Hugging Face models
+- **Flexible Backend Options**: 
+  - **Local Ollama**: Run completely on your local machine with Ollama models
+  - **Hugging Face API**: Connect to Hugging Face's hosted models
+- **Interactive Setup**: Easy-to-use installer script that guides you through configuration
 - **Copy-to-Use Format**: Generated emails include subject lines and properly formatted content
 
 ## Installation
@@ -31,81 +34,70 @@ Email Assistant is a Streamlit application that helps you draft professional ema
    pip install -r requirements.txt
    ```
 
+3. Run the installer script:
+   ```
+   ./launch
+   ```
+
 ## Usage
 
-The application can be run in two different modes:
+The application can now be launched using the interactive installer script:
 
-### Option 1: Using Local Ollama (Recommended for local development)
-
-1. Install [Ollama](https://ollama.ai/download) on your machine
-2. Make sure you have a model available in Ollama (the default is "mistral")
+1. Make the script executable (if needed):
    ```
-   ollama pull mistral
-   ```
-   - You can use any model by changing the `OLLAMA_MODEL` variable in `app.py`
-3. Start the Ollama service:
-   ```
-   ollama serve
-   ```
-4. Run the Streamlit app:
-   ```
-   streamlit run app.py
+   chmod +x launch
    ```
 
-### Option 2: Using Hugging Face API
-
-1. Get a [Hugging Face API key](https://huggingface.co/settings/tokens)
-2. Set the API key as an environment variable:
+2. Run the installer script:
    ```
-   export HUGGINGFACE_API_KEY=your_api_key_here
-   ```
-3. (Optional) Modify the `HF_MODEL` variable in `app.py` to use a different model:
-   ```python
-   HF_MODEL = "your-preferred-model"
-   ```
-4. Run the Streamlit app:
-   ```
-   streamlit run app.py
+   ./launch
    ```
 
-### Streamlit Cloud Deployment
+3. Follow the on-screen prompts to choose and configure your preferred backend:
 
-When deploying to Streamlit Cloud, add your Hugging Face API key to the Streamlit secrets:
+### Option 1: Using Hugging Face API
 
-1. Create a `.streamlit/secrets.toml` file with:
-   ```toml
-   [huggingface]
-   api_key = "your_api_key_here"
-   ```
-2. Add this file to your Streamlit Cloud secrets when deploying.
+The installer will:
+- Ask for your Hugging Face API key
+- Allow you to specify a custom model (or use the default)
+- Launch the application automatically
+
+### Option 2: Using Local Ollama (Recommended for local development)
+
+The installer will:
+- Check if Ollama is installed on your system
+- Offer to install it if needed
+- Allow you to specify which Ollama model to use
+- Configure the Ollama URL (useful for remote Ollama instances)
+- Launch the application automatically
 
 ## Configuration
 
-You can easily customize the models used by the application by modifying these variables at the top of the `app.py` file:
+The installer script handles all configuration for you, so there's no need to manually edit files. During setup, you can customize:
 
-```python
-# Hugging Face model setup
-HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"  # Change to your preferred Hugging Face model
+### For Hugging Face:
+- API key
+- Model selection (default: "mistralai/Mistral-7B-Instruct-v0.3")
 
-# Ollama model setup
-OLLAMA_MODEL = "mistral"  # Change to any model you have pulled in Ollama
-```
-
-Other configurable parameters:
-- Generation parameters: Modify temperature, max tokens, etc. in the `text_generation` function call
-- Email tones: Add or modify the `tone_options` list in the UI section
+### For Ollama:
+- Model selection (default: "llama2")
+- API URL (default: "http://127.0.0.1:11434")
 
 ## Troubleshooting
 
 - **Ollama Connection Issues**: 
-  - Ensure Ollama is running and accessible at http://127.0.0.1:11434
-  - Verify you have pulled the model specified in `OLLAMA_MODEL`
+  - Ensure Ollama is running and accessible at the configured URL
+  - Verify you have pulled the model you specified
   - Check Ollama logs for any errors: `ollama logs`
 
 - **Hugging Face API Errors**: 
   - Verify your API key is correct and not expired
   - Confirm the selected model is available and you have access to it
   - Check for any rate limiting issues
+
+- **Installer Script Issues**:
+  - Make sure the script has execution permissions (`chmod +x launch`)
+  - If installation fails, you can try installing Ollama manually from [ollama.ai](https://ollama.ai/download)
 
 - **Slow Performance**: 
   - Local models may be resource-intensive; consider using a smaller model
@@ -114,30 +106,6 @@ Other configurable parameters:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-```
-MIT License
-
-Copyright (c) 2025 Your Name
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
 
 ## Contributing
 
