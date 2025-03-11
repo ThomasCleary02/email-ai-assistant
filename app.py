@@ -13,16 +13,27 @@ OLLAMA_MODEL = "mistral"
 # Set page config
 st.set_page_config(page_title="Email Assistant", page_icon="📧")
 
-# Get API key from environment first
-api_key = os.getenv("HUGGINGFACE_API_KEY")
+# Get API key with better error handling
+def get_api_key():
+    # First try environment variable
+    api_key = os.getenv("HUGGINGFACE_API_KEY")
+    
+    # Then try Streamlit secrets with proper error handling
+    if not api_key:
+        try:
+            # Check if st.secrets exists and has the right structure
+            if hasattr(st, "secrets"):
+                if isinstance(st.secrets, dict) and "huggingface" in st.secrets:
+                    if isinstance(st.secrets["huggingface"], dict) and "api_key" in st.secrets["huggingface"]:
+                        api_key = st.secrets["huggingface"]["api_key"]
+        except Exception:
+            # Silently continue if any part fails
+            pass
+    
+    return api_key
 
-# Try to get from Streamlit secrets if available
-try:
-    if not api_key and hasattr(st, "secrets") and "huggingface" in st.secrets:
-        api_key = st.secrets["huggingface"]["api_key"]
-except Exception:
-    # If secrets aren't available, just continue with None or environment variable
-    pass
+# Get the API key
+api_key = get_api_key()
 
 # Initialize the LLM (Fallback to Hugging Face if Ollama is unavailable)
 @st.cache_resource
