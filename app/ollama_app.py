@@ -1,8 +1,8 @@
-import streamlit as st
 from langchain_ollama.llms import OllamaLLM
 from langchain.prompts import PromptTemplate
-import os
+import streamlit as st
 import template
+import os
 
 # Ollama settings from environment variables
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama2")
@@ -17,10 +17,10 @@ def get_ollama_llm():
 def create_new_email_prompt():
     template_text = """
     Write a single professional email with the following details:
-
+    
     Content/Purpose: {content}
     Tone: {tone}
-
+    
     Provide exactly one email with both a subject line and the email body.
     """
     return PromptTemplate(template=template_text, input_variables=["content", "tone"])
@@ -28,12 +28,12 @@ def create_new_email_prompt():
 def create_email_reply_prompt():
     template_text = """
     Write a reply to the following email:
-
+    
     Original Email: {original_email}
-
+    
     Your reply should communicate this message:
     {message}
-
+    
     It should also be in this tone: {tone}
     """
     return PromptTemplate(template=template_text, input_variables=["original_email", "message", "tone"])
@@ -48,7 +48,7 @@ def is_ollama_available():
         return True
     except Exception as e:
         st.session_state.connected = False
-        st.warning("Could not connect to Ollama. Is it running?")
+        st.warning(f"Could not connect to model, is it running?\nTry running 'ollama pull {OLLAMA_MODEL}'")
         return False
 
 # Function to generate a new email
