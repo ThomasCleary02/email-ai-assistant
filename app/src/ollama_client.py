@@ -1,4 +1,4 @@
-from utils.llm_client import LLMClient
+from src.utils.llm_client import LLMClient
 from langchain_ollama.llms import OllamaLLM
 
 class OllamaClient(LLMClient):

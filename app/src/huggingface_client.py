@@ -1,5 +1,5 @@
 from langchain_huggingface import HuggingFaceEndpoint
-from utils.llm_client import LLMClient
+from src.utils.llm_client import LLMClient
 
 class HuggingFaceClient(LLMClient):
 

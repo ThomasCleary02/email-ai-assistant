@@ -1,118 +1,127 @@
-# Email Assistant
+# Email AI Assistant
 
-Email Assistant is a Streamlit application that helps you draft professional emails and replies using AI. The app offers a simple, intuitive interface for generating well-crafted emails with customizable tones.
+A Streamlit application that helps you draft professional emails and replies using AI. This tool supports both local LLMs via Ollama and cloud-based models via HuggingFace's API.
 
 ## Features
 
-- **Two Modes**:
-  - **Draft New Email**: Generate a complete email from scratch based on your content description
-  - **Generate Reply**: Create appropriate responses to existing emails
-- **Customizable Tone**: Choose from various tones including Professional, Friendly, Formal, Persuasive, and Concise
-- **Flexible Backend Options**: 
-  - **Local Ollama**: Run completely on your local machine with Ollama models
-  - **Hugging Face API**: Connect to Hugging Face's hosted models
-- **Interactive Setup**: Easy-to-use installer script that guides you through configuration
-- **Copy-to-Use Format**: Generated emails include subject lines and properly formatted content
+- Create new email drafts with custom content and tone
+- Generate thoughtful replies to existing emails
+- Switch between HuggingFace and Ollama LLM backends
+- Customize tone: Professional, Friendly, Formal, Persuasive, or Concise
+- Simple and intuitive user interface
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.7+
-- pip (Python package installer)
+- Python 3.8+
+- pip
+- [Streamlit](https://streamlit.io/)
+- [LangChain](https://python.langchain.com/)
+- Optional: [Ollama](https://ollama.com/) for local LLM support
 
-### Basic Setup
+### Setup
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/email-assistant.git
-   cd email-assistant
-   ```
+1. Clone this repository:
 
-2. Install required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+```bash
+git clone https://github.com/yourusername/email-ai-assistant.git
+cd email-ai-assistant
+```
 
-3. Run the installer script:
-   ```
-   ./launch
-   ```
+2. Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+3. For Ollama support (local LLMs):
+   - Install Ollama from [ollama.com](https://ollama.com/)
+   - Pull your preferred model: `ollama pull llama2` (or another model)
+
+4. For HuggingFace support:
+   - [Create a HuggingFace account](https://huggingface.co/join)
+   - Generate an API key from your [HuggingFace settings](https://huggingface.co/settings/tokens)
 
 ## Usage
 
-The application can now be launched using the interactive installer script:
+### Quick Start with Launch Script
 
-1. Make the script executable (if needed):
-   ```
-   chmod +x launch
-   ```
+The easiest way to run the application is using the launch script:
 
-2. Run the installer script:
-   ```
-   ./launch
-   ```
+```bash
+./launch.sh
+```
 
-3. Follow the on-screen prompts to choose and configure your preferred backend:
+This script will help set up both HuggingFace API and Ollama if needed.
 
-### Option 1: Using Hugging Face API
+### Manual Start
 
-The installer will:
-- Ask for your Hugging Face API key
-- Allow you to specify a custom model (or use the default)
-- Launch the application automatically
+Alternatively, you can run the app directly:
 
-### Option 2: Using Local Ollama (Recommended for local development)
+```bash
+streamlit run app/main.py
+```
 
-The installer will:
-- Check if Ollama is installed on your system
-- Offer to install it if needed
-- Allow you to specify which Ollama model to use
-- Configure the Ollama URL (useful for remote Ollama instances)
-- Launch the application automatically
+### Environment Variables
 
-## Configuration
+You can configure the app using these environment variables:
 
-The installer script handles all configuration for you, so there's no need to manually edit files. During setup, you can customize:
+- `HUGGINGFACE_API_KEY`: Your HuggingFace API key
+- `HUGGINGFACE_MODEL`: Model to use on HuggingFace (default: "mistralai/Mistral-7B-Instruct-v0.3")
+- `OLLAMA_MODEL`: Model to use with Ollama (default: "llama2")
+- `OLLAMA_BASE_URL`: Ollama server URL (default: "http://127.0.0.1:11434")
 
-### For Hugging Face:
-- API key
-- Model selection (default: "mistralai/Mistral-7B-Instruct-v0.3")
+## Using the App
 
-### For Ollama:
-- Model selection (default: "llama2")
-- API URL (default: "http://127.0.0.1:11434")
+1. Select your preferred AI provider (HuggingFace or Ollama) from the sidebar
+2. Configure your selected provider if needed
+3. Choose either "Draft New Email" or "Generate Reply" tab
+4. Fill in the required fields:
+   - For new emails: content/purpose and tone
+   - For replies: original email, your response message, and tone
+5. Click "Generate Email" or "Generate Reply"
+6. Copy the generated content for use in your email client
+
+## Project Structure
+
+```
+├── app
+│   ├── src
+│   │   ├── utils
+│   │   │   ├── __init__.py
+│   │   │   └── llm_client.py
+│   │   ├── __init__.py
+│   │   ├── huggingface_client.py
+│   │   └── ollama_client.py
+│   └── main.py
+├── launch.sh
+├── requirements.txt
+├── LICENSE
+└── README.md
+```
 
 ## Troubleshooting
 
-- **Ollama Connection Issues**: 
-  - Ensure Ollama is running and accessible at the configured URL
-  - Verify you have pulled the model you specified
-  - Check Ollama logs for any errors: `ollama logs`
+### HuggingFace Issues
 
-- **Hugging Face API Errors**: 
-  - Verify your API key is correct and not expired
-  - Confirm the selected model is available and you have access to it
-  - Check for any rate limiting issues
+- Ensure your API key is valid and has proper permissions
+- Check your internet connection
+- Verify that the model you selected is available on HuggingFace
 
-- **Installer Script Issues**:
-  - Make sure the script has execution permissions (`chmod +x launch`)
-  - If installation fails, you can try installing Ollama manually from [ollama.ai](https://ollama.ai/download)
+### Ollama Issues
 
-- **Slow Performance**: 
-  - Local models may be resource-intensive; consider using a smaller model
-  - For Ollama, try models optimized for your hardware (e.g., quantized models)
+- Make sure Ollama is installed and running (`ollama serve`)
+- Verify that you've pulled the model you want to use (`ollama pull modelname`)
+- Check that the Ollama server is accessible at the configured URL
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+[MIT License](LICENSE)
 
-## Contributing
+## Acknowledgments
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Acknowledgements
-
-- Built with [Streamlit](https://streamlit.io/)
-- Uses [LangChain](https://github.com/hwchase17/langchain) for LLM integration
-- Powered by [Ollama](https://ollama.ai/) and [Hugging Face](https://huggingface.co/)
+- [Streamlit](https://streamlit.io/) for the web interface
+- [LangChain](https://python.langchain.com/) for the language model integration
+- [Ollama](https://ollama.com/) for local LLM support
+- [HuggingFace](https://huggingface.co/) for cloud LLM support
